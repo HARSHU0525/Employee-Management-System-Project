@@ -73,4 +73,49 @@
     <p class="error">{{ errorMessage }}</p>
   }
 
+  @if (employees.length > 0) {
+
+    <h2>Employee List</h2>
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Department</th>
+          <th>Salary</th>
+          <th>Phone</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (emp of employees; track emp.id) {
+
+          <tr>
+            <td>{{ emp.name }}</td>
+            <td>{{ emp.email }}</td>
+            <td>{{ emp.department }}</td>
+            <td>{{ emp.salary }}</td>
+            <td>{{ emp.phone }}</td>
+
+            <td>
+              <button
+                type="button"
+                (click)="deleteEmployee(emp.id!)">
+                Delete
+              </button>
+            </td>
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  }
+
 </div>
