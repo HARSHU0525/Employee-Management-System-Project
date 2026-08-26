@@ -16,13 +16,20 @@ router.get("/", getEmployees);
 module.exports = router;
     getEmployees,
     addEmployee,
-    deleteEmployee
+    deleteEmployee,
+    updateEmployee
 } = require("../controllers/employeeController");
 
+// Get all employees
 router.get("/", getEmployees);
 
+// Add employee
 router.post("/", addEmployee);
 
+// Update employee
+router.put("/:id", updateEmployee);
+
+// Delete employee
 router.delete("/:id", deleteEmployee);
 
 module.exports = router;

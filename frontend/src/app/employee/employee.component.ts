@@ -14,6 +14,7 @@ export class EmployeeComponent implements OnInit {
 
   // ADD EMPLOYEE
   employee: Employee = {
+    id: undefined,
     name: '',
     email: '',
     department: '',
@@ -22,6 +23,9 @@ export class EmployeeComponent implements OnInit {
   };
 
   employees: Employee[] = [];
+
+  showUpdateButton = false;
+  showUpdateForm = false;
 
   message = '';
   errorMessage = '';
@@ -44,6 +48,7 @@ export class EmployeeComponent implements OnInit {
     this.getEmployees();
   }
 
+  // Get all employees
   getEmployees(): void {
     this.employeeService.getEmployees().subscribe({
       next: (response) => {
@@ -51,71 +56,31 @@ export class EmployeeComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
+
         this.errorMessage =
           error.error?.message || 'Failed to fetch employees';
       }
     });
   }
 
+  // Add Employee
   addEmployee(): void {
     this.message = '';
     this.errorMessage = '';
 
     this.employeeService.addEmployee(this.employee).subscribe({
-
       next: (response) => {
-
         console.log('Employee added:', response);
-      next: () => {
 
         this.message = 'Employee added successfully!';
 
-        // Clear form
-        this.employee = {
-          name: '',
-          email: '',
-          department: '',
-          salary: 0,
-          phone: ''
-        };
+        // Keep the ID of the newly added employee
+        this.employee.id = response.employee?.id;
+
+        // Show Update button
+        this.showUpdateButton = true;
 
         // Refresh employee list
-        this.getEmployees();
-      },
-
-      error: (error: any) => {
-
-        console.error('FULL ERROR:', error);
-
-        this.errorMessage =
-          error.error?.error ||
-          error.error?.message ||
-          error.message ||
-          'Failed to add employee';
-      }
-
-    });
-  }
-
-  // GET ALL EMPLOYEES
-  getEmployees(): void {
-
-    this.employeeService.getEmployees().subscribe({
-
-      next: (data: Employee[]) => {
-
-        console.log('Employees received:', data);
-
-        this.employees = data;
-
-        this.filteredEmployees = data;
-
-        this.searchEmployees();
-      },
-
-      error: (error: any) => {
-
-        console.error('Error getting employees:', error);
         this.getEmployees();
       },
 
@@ -135,30 +100,13 @@ export class EmployeeComponent implements OnInit {
     });
   }
 
-  // SEARCH EMPLOYEES
-  searchEmployees(): void {
-
-    const search = this.searchText.trim().toLowerCase();
-
-    if (!search) {
-      this.filteredEmployees = this.employees;
-      return;
-    }
-
-    this.filteredEmployees = this.employees.filter((emp: Employee) =>
-      emp.name.toLowerCase().includes(search) ||
-      emp.email.toLowerCase().includes(search) ||
-      emp.department.toLowerCase().includes(search) ||
-      emp.phone.includes(search)
-    );
+  // Delete Employee
   deleteEmployee(id: number): void {
-
     this.message = '';
     this.errorMessage = '';
 
     this.employeeService.deleteEmployee(id).subscribe({
       next: () => {
-
         this.message = 'Employee deleted successfully!';
 
         this.employees = this.employees.filter(
@@ -173,5 +121,55 @@ export class EmployeeComponent implements OnInit {
           error.error?.message || 'Failed to delete employee';
       }
     });
+  }
+
+  // Open Update Form
+  openUpdateForm(): void {
+    this.showUpdateForm = true;
+
+    this.message = '';
+    this.errorMessage = '';
+  }
+
+  // Update Employee
+  updateEmployee(): void {
+    this.message = '';
+    this.errorMessage = '';
+
+    if (!this.employee.id) {
+      this.errorMessage = 'Employee ID is required';
+      return;
+    }
+
+    this.employeeService.updateEmployee(
+      this.employee.id,
+      this.employee
+    ).subscribe({
+      next: (response) => {
+        console.log('Employee updated:', response);
+
+        this.message = 'Employee updated successfully!';
+
+        this.showUpdateForm = false;
+
+        // Refresh employee list
+        this.getEmployees();
+      },
+
+      error: (error) => {
+        console.error(error);
+
+        this.errorMessage =
+          error.error?.message || 'Failed to update employee';
+      }
+    });
+  }
+
+  // Cancel Update
+  cancelUpdate(): void {
+    this.showUpdateForm = false;
+
+    this.message = '';
+    this.errorMessage = '';
   }
 }

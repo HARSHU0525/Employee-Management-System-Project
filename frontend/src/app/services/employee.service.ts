@@ -24,7 +24,7 @@ export class EmployeeService {
 
   constructor(private http: HttpClient) {}
 
-  // ADD EMPLOYEE
+  // Add Employee
   addEmployee(employee: Employee): Observable<any> {
     return this.http.post<any>(this.apiUrl, employee);
   }
@@ -39,10 +39,17 @@ export class EmployeeService {
       );
   }
 
+  // Get all Employees
   getEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(this.apiUrl);
   }
 
+  // Update Employee
+  updateEmployee(id: number, employee: Employee): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, employee);
+  }
+
+  // Delete Employee
   deleteEmployee(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
