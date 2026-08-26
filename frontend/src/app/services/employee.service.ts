@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 
 export interface Employee {
   id?: number;
@@ -8,11 +8,7 @@ export interface Employee {
   email: string;
   department: string;
   salary: number;
-  phone: string;
-}
-
-interface EmployeeResponse {
-  employees: Employee[];
+  phone?: string;
 }
 
 @Injectable({
@@ -24,33 +20,28 @@ export class EmployeeService {
 
   constructor(private http: HttpClient) {}
 
-  // Add Employee
-  addEmployee(employee: Employee): Observable<any> {
-    return this.http.post<any>(this.apiUrl, employee);
-  }
-
-  // VIEW ALL EMPLOYEES
-  getEmployees(): Observable<Employee[]> {
-
-    return this.http
-      .get<EmployeeResponse>(this.apiUrl)
-      .pipe(
-        map(response => response.employees)
-      );
-  }
-
-  // Get all Employees
+  // Get all employees
   getEmployees(): Observable<Employee[]> {
     return this.http.get<Employee[]>(this.apiUrl);
   }
 
-  // Update Employee
-  updateEmployee(id: number, employee: Employee): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, employee);
+  // Add employee
+  addEmployee(employee: Employee): Observable<Employee> {
+    return this.http.post<Employee>(this.apiUrl, employee);
   }
 
-  // Delete Employee
+  // Update employee
+  updateEmployee(id: number, employee: Employee): Observable<Employee> {
+    return this.http.put<Employee>(
+      `${this.apiUrl}/${id}`,
+      employee
+    );
+  }
+
+  // Delete employee
   deleteEmployee(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(
+      `${this.apiUrl}/${id}`
+    );
   }
 }

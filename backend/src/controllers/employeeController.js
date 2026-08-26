@@ -1,13 +1,17 @@
 const pool = require("../config/db");
 
+// =============================
 // GET ALL EMPLOYEES
+// =============================
 const getEmployees = async (req, res) => {
     try {
         const result = await pool.query(
             "SELECT * FROM employees ORDER BY id ASC"
         );
 
-        res.status(200).json(result.rows);
+        res.status(200).json({
+            employees: result.rows
+        });
 
     } catch (error) {
         console.error("Error fetching employees:", error);
@@ -20,28 +24,25 @@ const getEmployees = async (req, res) => {
 };
 
 
+// =============================
 // ADD EMPLOYEE
+// =============================
 const addEmployee = async (req, res) => {
     try {
-        const { name, email, department, salary, phone } = req.body;
-
-        console.log("Received employee:", req.body);
-
-        if (!name || !email || !department || !salary || !phone) {
-            return res.status(400).json({
-                message: "All fields are required"
-            });
-        }
+        const {
+            name,
+            email,
+            department,
+            position
+        } = req.body;
 
         const result = await pool.query(
             `INSERT INTO employees
-            (name, email, department, salary, phone)
-            VALUES ($1, $2, $3, $4, $5)
+            (name, email, department, position)
+            VALUES ($1, $2, $3, $4)
             RETURNING *`,
-            [name, email, department, salary, phone]
+            [name, email, department, position]
         );
-
-        console.log("Employee added:", result.rows[0]);
 
         res.status(201).json({
             message: "Employee added successfully",
@@ -58,24 +59,57 @@ const addEmployee = async (req, res) => {
     }
 };
 
-// VIEW ALL EMPLOYEES
-const getEmployees = async (req, res) => {
+
+// =============================
+// UPDATE EMPLOYEE
+// =============================
+const updateEmployee = async (req, res) => {
     try {
+        const { id } = req.params;
+
+        const {
+            name,
+            email,
+            department,
+            position
+        } = req.body;
+
         const result = await pool.query(
-            `SELECT * FROM employees ORDER BY id ASC`
+            `UPDATE employees
+             SET name = $1,
+                 email = $2,
+                 department = $3,
+                 position = $4
+             WHERE id = $5
+             RETURNING *`,
+            [name, email, department, position, id]
         );
 
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                message: "Employee not found"
+            });
+        }
+
         res.status(200).json({
-            employees: result.rows
+            message: "Employee updated successfully",
+            employee: result.rows[0]
         });
 
     } catch (error) {
-        console.error("Error fetching employees:", error);
+        console.error("Error updating employee:", error);
 
         res.status(500).json({
-            message: "Failed to fetch employees",
+            message: "Failed to update employee",
+            error: error.message
+        });
+    }
+};
 
+
+// =============================
 // DELETE EMPLOYEE
+// =============================
 const deleteEmployee = async (req, res) => {
     try {
         const { id } = req.params;
@@ -109,11 +143,12 @@ const deleteEmployee = async (req, res) => {
 };
 
 
+// =============================
+// EXPORT ALL CONTROLLERS
+// =============================
 module.exports = {
-    addEmployee,
-    getEmployees
-};
     getEmployees,
     addEmployee,
+    updateEmployee,
     deleteEmployee
 };
