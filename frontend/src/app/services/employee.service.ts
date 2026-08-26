@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Employee {
+  id?: number;
   name: string;
   email: string;
   department: string;
@@ -21,5 +22,9 @@ export class EmployeeService {
 
   addEmployee(employee: Employee): Observable<any> {
     return this.http.post(this.apiUrl, employee);
+  }
+
+  updateEmployee(id: number, employee: Employee): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, employee);
   }
 }

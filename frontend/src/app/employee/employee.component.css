@@ -1,44 +1,126 @@
 .employee-container {
-  width: 400px;
+  width: 420px;
   margin: 40px auto;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  padding: 30px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-h1 {
+.employee-container h1 {
   text-align: center;
   margin-bottom: 25px;
+  color: #2c3e50;
+  font-size: 28px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 7px;
   font-weight: bold;
+  color: #34495e;
 }
 
 input {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 1px solid #bdc3c7;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.35);
+}
+
+/* All buttons */
+button {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
   box-sizing: border-box;
 }
 
-button {
-  width: 100%;
-  padding: 12px;
-  cursor: pointer;
+/* Add button */
+.add-button {
+  background: #3498db;
+  color: white;
+  margin-top: 5px;
+}
+
+.add-button:hover {
+  background: #2980b9;
+}
+
+/* Update open button */
+.update-open-button {
+  background: #27ae60;
+  color: white;
+  margin-top: 18px;
+}
+
+.update-open-button:hover {
+  background: #219150;
+}
+
+/* Update submit button */
+.update-submit-button {
+  background: #3498db;
+  color: white;
+  margin-top: 5px;
+}
+
+.update-submit-button:hover {
+  background: #2980b9;
+}
+
+/* Cancel button */
+.cancel-button {
+  background: #e74c3c;
+  color: white;
+  margin-top: 12px;
+}
+
+.cancel-button:hover {
+  background: #c0392b;
 }
 
 .success {
-  color: green;
+  color: #27ae60;
   text-align: center;
+  font-weight: bold;
+  margin-top: 15px;
 }
 
 .error {
-  color: red;
+  color: #e74c3c;
   text-align: center;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.update-button-section {
+  margin-top: 20px;
+}
+
+.update-section {
+  margin-top: 25px;
+}
+
+hr {
+  margin: 30px 0;
+  border: none;
+  border-top: 2px solid #ecf0f1;
 }
