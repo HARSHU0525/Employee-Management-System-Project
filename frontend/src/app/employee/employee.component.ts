@@ -12,6 +12,7 @@ import { EmployeeService, Employee } from '../services/employee.service';
 })
 export class EmployeeComponent implements OnInit {
 
+  // ADD EMPLOYEE
   employee: Employee = {
     id: undefined,
     name: '',
@@ -29,8 +30,20 @@ export class EmployeeComponent implements OnInit {
   message = '';
   errorMessage = '';
 
+  // VIEW EMPLOYEES
+  employees: Employee[] = [];
+  filteredEmployees: Employee[] = [];
+  searchText = '';
+
   constructor(private employeeService: EmployeeService) {}
 
+  // LOAD EMPLOYEES WHEN PAGE OPENS
+  ngOnInit(): void {
+    this.getEmployees();
+  }
+
+  // ADD EMPLOYEE
+  addEmployee(): void {
   ngOnInit(): void {
     this.getEmployees();
   }
@@ -75,8 +88,15 @@ export class EmployeeComponent implements OnInit {
         console.error(error);
 
         this.errorMessage =
-          error.error?.message || 'Failed to add employee';
+          error.error?.error ||
+          error.error?.message ||
+          error.message ||
+          'Failed to get employees';
+
+        this.employees = [];
+        this.filteredEmployees = [];
       }
+
     });
   }
 

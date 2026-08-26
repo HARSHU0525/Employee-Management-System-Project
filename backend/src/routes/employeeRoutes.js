@@ -3,6 +3,17 @@ const express = require("express");
 const router = express.Router();
 
 const {
+    addEmployee,
+    getEmployees
+} = require("../controllers/employeeController");
+
+// ADD EMPLOYEE
+router.post("/", addEmployee);
+
+// VIEW ALL EMPLOYEES
+router.get("/", getEmployees);
+
+module.exports = router;
     getEmployees,
     addEmployee,
     deleteEmployee,

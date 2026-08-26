@@ -58,6 +58,22 @@ const addEmployee = async (req, res) => {
     }
 };
 
+// VIEW ALL EMPLOYEES
+const getEmployees = async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT * FROM employees ORDER BY id ASC`
+        );
+
+        res.status(200).json({
+            employees: result.rows
+        });
+
+    } catch (error) {
+        console.error("Error fetching employees:", error);
+
+        res.status(500).json({
+            message: "Failed to fetch employees",
 
 // DELETE EMPLOYEE
 const deleteEmployee = async (req, res) => {
@@ -94,6 +110,9 @@ const deleteEmployee = async (req, res) => {
 
 
 module.exports = {
+    addEmployee,
+    getEmployees
+};
     getEmployees,
     addEmployee,
     deleteEmployee
