@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 export interface Employee {
   id?: number;
@@ -9,6 +9,10 @@ export interface Employee {
   department: string;
   salary: number;
   phone: string;
+}
+
+interface EmployeeResponse {
+  employees: Employee[];
 }
 
 @Injectable({
@@ -20,8 +24,19 @@ export class EmployeeService {
 
   constructor(private http: HttpClient) {}
 
+  // ADD EMPLOYEE
   addEmployee(employee: Employee): Observable<any> {
-    return this.http.post(this.apiUrl, employee);
+    return this.http.post<any>(this.apiUrl, employee);
+  }
+
+  // VIEW ALL EMPLOYEES
+  getEmployees(): Observable<Employee[]> {
+
+    return this.http
+      .get<EmployeeResponse>(this.apiUrl)
+      .pipe(
+        map(response => response.employees)
+      );
   }
 
   getEmployees(): Observable<Employee[]> {
