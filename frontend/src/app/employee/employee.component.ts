@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { EmployeeService, Employee } from '../services/employee.service';
 
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './employee.component.html',
   styleUrl: './employee.component.css'
 })
@@ -19,6 +20,8 @@ export class EmployeeComponent implements OnInit {
     salary: 0,
     phone: ''
   };
+
+  employees: Employee[] = [];
 
   message = '';
   errorMessage = '';
@@ -37,7 +40,24 @@ export class EmployeeComponent implements OnInit {
 
   // ADD EMPLOYEE
   addEmployee(): void {
+  ngOnInit(): void {
+    this.getEmployees();
+  }
 
+  getEmployees(): void {
+    this.employeeService.getEmployees().subscribe({
+      next: (response) => {
+        this.employees = response;
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage =
+          error.error?.message || 'Failed to fetch employees';
+      }
+    });
+  }
+
+  addEmployee(): void {
     this.message = '';
     this.errorMessage = '';
 
@@ -46,6 +66,7 @@ export class EmployeeComponent implements OnInit {
       next: (response) => {
 
         console.log('Employee added:', response);
+      next: () => {
 
         this.message = 'Employee added successfully!';
 
@@ -95,6 +116,11 @@ export class EmployeeComponent implements OnInit {
       error: (error: any) => {
 
         console.error('Error getting employees:', error);
+        this.getEmployees();
+      },
+
+      error: (error) => {
+        console.error(error);
 
         this.errorMessage =
           error.error?.error ||
@@ -125,5 +151,27 @@ export class EmployeeComponent implements OnInit {
       emp.department.toLowerCase().includes(search) ||
       emp.phone.includes(search)
     );
+  deleteEmployee(id: number): void {
+
+    this.message = '';
+    this.errorMessage = '';
+
+    this.employeeService.deleteEmployee(id).subscribe({
+      next: () => {
+
+        this.message = 'Employee deleted successfully!';
+
+        this.employees = this.employees.filter(
+          employee => employee.id !== id
+        );
+      },
+
+      error: (error) => {
+        console.error(error);
+
+        this.errorMessage =
+          error.error?.message || 'Failed to delete employee';
+      }
+    });
   }
 }

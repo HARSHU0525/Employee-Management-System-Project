@@ -14,3 +14,15 @@ router.post("/", addEmployee);
 router.get("/", getEmployees);
 
 module.exports = router;
+    getEmployees,
+    addEmployee,
+    deleteEmployee
+} = require("../controllers/employeeController");
+
+router.get("/", getEmployees);
+
+router.post("/", addEmployee);
+
+router.delete("/:id", deleteEmployee);
+
+module.exports = router;
