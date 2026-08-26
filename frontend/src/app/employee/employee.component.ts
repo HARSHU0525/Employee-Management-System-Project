@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { EmployeeService, Employee } from '../services/employee.service';
 
 @Component({
   selector: 'app-employee',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './employee.component.html',
   styleUrl: './employee.component.css'
 })
-export class EmployeeComponent {
+export class EmployeeComponent implements OnInit {
 
   employee: Employee = {
     id: undefined,
@@ -20,6 +21,8 @@ export class EmployeeComponent {
     phone: ''
   };
 
+  employees: Employee[] = [];
+
   showUpdateButton = false;
   showUpdateForm = false;
 
@@ -27,6 +30,25 @@ export class EmployeeComponent {
   errorMessage = '';
 
   constructor(private employeeService: EmployeeService) {}
+
+  ngOnInit(): void {
+    this.getEmployees();
+  }
+
+  // Get all employees
+  getEmployees(): void {
+    this.employeeService.getEmployees().subscribe({
+      next: (response) => {
+        this.employees = response;
+      },
+      error: (error) => {
+        console.error(error);
+
+        this.errorMessage =
+          error.error?.message || 'Failed to fetch employees';
+      }
+    });
+  }
 
   // Add Employee
   addEmployee(): void {
@@ -39,20 +61,44 @@ export class EmployeeComponent {
 
         this.message = 'Employee added successfully!';
 
-        // Show the Update button after successful add
+        // Keep the ID of the newly added employee
+        this.employee.id = response.employee?.id;
+
+        // Show Update button
         this.showUpdateButton = true;
 
-        // Keep the newly created employee ID
-        this.employee.id = response.employee.id;
-
-        console.log('New employee ID:', this.employee.id);
+        // Refresh employee list
+        this.getEmployees();
       },
 
       error: (error) => {
-        console.error('Error adding employee:', error);
+        console.error(error);
 
         this.errorMessage =
           error.error?.message || 'Failed to add employee';
+      }
+    });
+  }
+
+  // Delete Employee
+  deleteEmployee(id: number): void {
+    this.message = '';
+    this.errorMessage = '';
+
+    this.employeeService.deleteEmployee(id).subscribe({
+      next: () => {
+        this.message = 'Employee deleted successfully!';
+
+        this.employees = this.employees.filter(
+          employee => employee.id !== id
+        );
+      },
+
+      error: (error) => {
+        console.error(error);
+
+        this.errorMessage =
+          error.error?.message || 'Failed to delete employee';
       }
     });
   }
@@ -75,17 +121,23 @@ export class EmployeeComponent {
       return;
     }
 
-    this.employeeService.updateEmployee(this.employee.id, this.employee).subscribe({
+    this.employeeService.updateEmployee(
+      this.employee.id,
+      this.employee
+    ).subscribe({
       next: (response) => {
         console.log('Employee updated:', response);
 
         this.message = 'Employee updated successfully!';
 
         this.showUpdateForm = false;
+
+        // Refresh employee list
+        this.getEmployees();
       },
 
       error: (error) => {
-        console.error('Error updating employee:', error);
+        console.error(error);
 
         this.errorMessage =
           error.error?.message || 'Failed to update employee';
