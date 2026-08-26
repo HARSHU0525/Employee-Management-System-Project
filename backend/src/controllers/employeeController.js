@@ -1,18 +1,15 @@
 const pool = require("../config/db");
 
-// =============================
+// ==========================================
 // GET ALL EMPLOYEES
-// =============================
+// ==========================================
 const getEmployees = async (req, res) => {
     try {
         const result = await pool.query(
             "SELECT * FROM employees ORDER BY id ASC"
         );
 
-        res.status(200).json({
-            employees: result.rows
-        });
-
+        res.status(200).json(result.rows);
     } catch (error) {
         console.error("Error fetching employees:", error);
 
@@ -24,24 +21,38 @@ const getEmployees = async (req, res) => {
 };
 
 
-// =============================
+// ==========================================
 // ADD EMPLOYEE
-// =============================
+// ==========================================
 const addEmployee = async (req, res) => {
     try {
         const {
             name,
             email,
             department,
-            position
+            salary,
+            phone
         } = req.body;
+
+        // Basic validation
+        if (!name || !email || !department || !salary || !phone) {
+            return res.status(400).json({
+                message: "All employee fields are required"
+            });
+        }
 
         const result = await pool.query(
             `INSERT INTO employees
-            (name, email, department, position)
-            VALUES ($1, $2, $3, $4)
+            (name, email, department, salary, phone)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING *`,
-            [name, email, department, position]
+            [
+                name,
+                email,
+                department,
+                salary,
+                phone
+            ]
         );
 
         res.status(201).json({
@@ -60,9 +71,9 @@ const addEmployee = async (req, res) => {
 };
 
 
-// =============================
+// ==========================================
 // UPDATE EMPLOYEE
-// =============================
+// ==========================================
 const updateEmployee = async (req, res) => {
     try {
         const { id } = req.params;
@@ -71,18 +82,34 @@ const updateEmployee = async (req, res) => {
             name,
             email,
             department,
-            position
+            salary,
+            phone
         } = req.body;
+
+        if (!name || !email || !department || !salary || !phone) {
+            return res.status(400).json({
+                message: "All employee fields are required"
+            });
+        }
 
         const result = await pool.query(
             `UPDATE employees
-             SET name = $1,
-                 email = $2,
-                 department = $3,
-                 position = $4
-             WHERE id = $5
+             SET
+                name = $1,
+                email = $2,
+                department = $3,
+                salary = $4,
+                phone = $5
+             WHERE id = $6
              RETURNING *`,
-            [name, email, department, position, id]
+            [
+                name,
+                email,
+                department,
+                salary,
+                phone,
+                id
+            ]
         );
 
         if (result.rows.length === 0) {
@@ -107,9 +134,9 @@ const updateEmployee = async (req, res) => {
 };
 
 
-// =============================
+// ==========================================
 // DELETE EMPLOYEE
-// =============================
+// ==========================================
 const deleteEmployee = async (req, res) => {
     try {
         const { id } = req.params;
@@ -143,9 +170,9 @@ const deleteEmployee = async (req, res) => {
 };
 
 
-// =============================
+// ==========================================
 // EXPORT ALL CONTROLLERS
-// =============================
+// ==========================================
 module.exports = {
     getEmployees,
     addEmployee,

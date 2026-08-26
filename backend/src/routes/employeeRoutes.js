@@ -9,16 +9,33 @@ const {
     deleteEmployee
 } = require("../controllers/employeeController");
 
-// Get all employees
+
+// ==========================================
+// GET ALL EMPLOYEES
+// GET /api/employees
+// ==========================================
 router.get("/", getEmployees);
 
-// Add employee
+
+// ==========================================
+// ADD EMPLOYEE
+// POST /api/employees
+// ==========================================
 router.post("/", addEmployee);
 
-// Update employee
+
+// ==========================================
+// UPDATE EMPLOYEE
+// PUT /api/employees/:id
+// ==========================================
 router.put("/:id", updateEmployee);
 
-// Delete employee
+
+// ==========================================
+// DELETE EMPLOYEE
+// DELETE /api/employees/:id
+// ==========================================
 router.delete("/:id", deleteEmployee);
+
 
 module.exports = router;
